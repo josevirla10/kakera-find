@@ -44,7 +44,7 @@ function normalizeAEProduct(item: AEProduct): Product {
 
 export async function searchAliExpress(
   query: string,
-  options: { limit?: number; sort?: SortOption } = {}
+  options: { limit?: number; sort?: SortOption; page?: number } = {}
 ): Promise<Product[]> {
   const appKey = process.env.AE_APP_KEY
   const appSecret = process.env.AE_APP_SECRET
@@ -63,7 +63,7 @@ export async function searchAliExpress(
     v: '2.0',
     keywords: query,
     page_size: String(options.limit ?? 20),
-    page_no: '1',
+    page_no: String(options.page ?? 1),
     sort: SORT_MAP[options.sort ?? 'relevance'],
     fields: 'product_id,product_title,sale_price,product_main_image_url,product_detail_url,promotion_link',
     target_currency: 'USD',

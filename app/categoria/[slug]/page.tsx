@@ -7,8 +7,11 @@ import { getCategoryBySlug, CATEGORIES } from '@/lib/categories'
 import { ProductGrid } from '@/components/products/ProductGrid'
 import type { Product } from '@/types/product'
 
+const PAGE_SIZE = 20
+
 interface PageProps {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ page?: string }>
 }
 
 export function generateStaticParams() {
@@ -26,16 +29,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 // TODO: i18n
-export default async function CategoriaPage({ params }: PageProps) {
+export default async function CategoriaPage({ params, searchParams }: PageProps) {
   const { slug } = await params
+  const { page: pageParam } = await searchParams
+  const page = Math.max(1, parseInt(pageParam ?? '1', 10))
+  const offset = (page - 1) * PAGE_SIZE
+
   const category = getCategoryBySlug(slug)
   if (!category) notFound()
 
   let products: Product[] = []
 
   const [mlResult, aeResult] = await Promise.allSettled([
-    searchML(category.query, { limit: 16 }),
-    searchAliExpress(category.query, { limit: 16 }),
+    searchML(category.query, { limit: PAGE_SIZE, offset, }),
+    searchAliExpress(category.query, { limit: PAGE_SIZE, page }),
   ])
   const ml = mlResult.status === 'fulfilled' ? mlResult.value : []
   const ae = aeResult.status === 'fulfilled' ? aeResult.value : []
@@ -46,6 +53,8 @@ export default async function CategoriaPage({ params }: PageProps) {
       products.push(p)
     }
   }
+
+  const hasMore = products.length >= PAGE_SIZE
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -69,7 +78,29 @@ export default async function CategoriaPage({ params }: PageProps) {
 
       {/* Products */}
       {products.length > 0 ? (
-        <ProductGrid products={products} columns={4} />
+        <>
+          <ProductGrid products={products} columns={4} />
+
+          {/* Pagination */}
+          <div className="flex items-center justify-center gap-3 mt-10">
+            {page > 1 && (
+              <Link
+                href={`/categoria/${slug}?page=${page - 1}`}
+                className="px-5 py-2.5 rounded-xl border border-border-subtle text-sm text-content-secondary hover:text-content-primary hover:border-accent transition-colors"
+              >
+                ← Anterior
+              </Link>
+            )}
+            {hasMore && (
+              <Link
+                href={`/categoria/${slug}?page=${page + 1}`}
+                className="px-5 py-2.5 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent/90 transition-colors"
+              >
+                Ver más →
+              </Link>
+            )}
+          </div>
+        </>
       ) : (
         <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
           <span className="text-5xl">😿</span>
