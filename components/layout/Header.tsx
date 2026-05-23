@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { SearchBar } from '@/components/search/SearchBar'
 
 // TODO: i18n
@@ -7,7 +8,14 @@ export function Header() {
     <header className="sticky top-0 z-30 bg-surface border-b border-border-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-6">
         {/* Logo */}
-        <Link href="/" className="shrink-0 group">
+        <Link href="/" className="shrink-0 group flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="Kakera Find"
+            width={36}
+            height={36}
+            className="rounded-full"
+          />
           <div className="flex flex-col leading-none">
             <span className="text-[10px] font-semibold text-accent tracking-[0.2em] uppercase">
               Kakera
