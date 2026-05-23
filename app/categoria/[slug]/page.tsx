@@ -33,20 +33,18 @@ export default async function CategoriaPage({ params }: PageProps) {
 
   let products: Product[] = []
 
-  try {
-    const [ml, ae] = await Promise.all([
-      searchML(category.query, { limit: 16 }),
-      searchAliExpress(category.query, { limit: 4 }),
-    ])
-    const seen = new Set<string>()
-    for (const p of [...ml, ...ae]) {
-      if (!seen.has(p.id)) {
-        seen.add(p.id)
-        products.push(p)
-      }
+  const [mlResult, aeResult] = await Promise.allSettled([
+    searchML(category.query, { limit: 16 }),
+    searchAliExpress(category.query, { limit: 16 }),
+  ])
+  const ml = mlResult.status === 'fulfilled' ? mlResult.value : []
+  const ae = aeResult.status === 'fulfilled' ? aeResult.value : []
+  const seen = new Set<string>()
+  for (const p of [...ml, ...ae]) {
+    if (!seen.has(p.id)) {
+      seen.add(p.id)
+      products.push(p)
     }
-  } catch {
-    // API unavailable — show empty state
   }
 
   return (
