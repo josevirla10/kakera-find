@@ -41,15 +41,22 @@ async function SearchResults({
   let products: Product[] = []
   const sort = (['price_asc', 'price_desc'].includes(orden) ? orden : 'relevance') as SortOption
   const offset = (page - 1) * PAGE_SIZE
+  const min = precioMin ? Number(precioMin) : null
+  const max = precioMax ? Number(precioMax) : null
+  const hasPriceFilter = min !== null || max !== null
+
+  // When a price filter is active, fetch by relevance so we get a diverse price range
+  // instead of only the N most/least expensive items. Sort is applied locally after filtering.
+  const apiSort: SortOption = hasPriceFilter ? 'relevance' : sort
 
   if (fuente === 'aliexpress') {
-    products = await searchAliExpress(q, { sort, limit: PAGE_SIZE, page })
+    products = await searchAliExpress(q, { sort: apiSort, limit: PAGE_SIZE, page })
   } else if (fuente === 'mercadolibre') {
-    products = await searchML(q, { sort, limit: PAGE_SIZE, offset }).catch(() => [])
+    products = await searchML(q, { sort: apiSort, limit: PAGE_SIZE, offset }).catch(() => [])
   } else {
     const [mlResult, aeResult] = await Promise.allSettled([
-      searchML(q, { sort, limit: PAGE_SIZE, offset }),
-      searchAliExpress(q, { sort, limit: PAGE_SIZE, page }),
+      searchML(q, { sort: apiSort, limit: PAGE_SIZE, offset }),
+      searchAliExpress(q, { sort: apiSort, limit: PAGE_SIZE, page }),
     ])
     const ml = mlResult.status === 'fulfilled' ? mlResult.value : []
     const ae = aeResult.status === 'fulfilled' ? aeResult.value : []
@@ -57,9 +64,7 @@ async function SearchResults({
   }
 
   // Price filtering
-  const min = precioMin ? Number(precioMin) : null
-  const max = precioMax ? Number(precioMax) : null
-  if (min !== null || max !== null) {
+  if (hasPriceFilter) {
     products = products.filter((p) => {
       if (min !== null && p.price < min) return false
       if (max !== null && p.price > max) return false
@@ -67,11 +72,9 @@ async function SearchResults({
     })
   }
 
-  // Sort merged results
-  if (fuente === 'all') {
-    if (orden === 'price_asc') products.sort((a, b) => a.price - b.price)
-    if (orden === 'price_desc') products.sort((a, b) => b.price - a.price)
-  }
+  // Sort locally (always for merged results, or when price filter overrode API sort)
+  if (orden === 'price_asc') products.sort((a, b) => a.price - b.price)
+  if (orden === 'price_desc') products.sort((a, b) => b.price - a.price)
 
   if (products.length === 0) {
     return (
