@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { SearchBar } from '@/components/search/SearchBar'
+import { InstallButton } from '@/components/pwa/InstallButton'
 
 export function Header() {
   const [open, setOpen] = useState(false)
@@ -55,6 +56,7 @@ export function Header() {
           >
             Nosotros
           </Link>
+          <InstallButton />
         </nav>
 
         {/* Hamburger — mobile */}
@@ -104,6 +106,9 @@ export function Header() {
           >
             Nosotros
           </Link>
+          <div className="px-3 pt-1">
+            <InstallButton />
+          </div>
         </nav>
       )}
     </header>
