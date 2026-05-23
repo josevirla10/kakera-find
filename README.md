@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kakera Find
 
-## Getting Started
+Plataforma de descubrimiento de productos anime. Un proyecto de **Kakera Labs**.
 
-First, run the development server:
+Encontrá figuras, periféricos kawaii, merch oficial, ropa, decoración y más — todo curado en un solo lugar con links directos a las tiendas vía afiliados.
+
+## Stack
+
+- **Next.js 16** (App Router, TypeScript)
+- **Tailwind CSS v4**
+- **MercadoLibre API** pública (sin auth)
+- **AliExpress** mockeado (estructura lista para conectar)
+- **Deploy:** Vercel
+
+## Setup local
 
 ```bash
+# 1. Clonar el repo
+git clone <repo-url>
+cd kakera-find
+
+# 2. Instalar dependencias
+npm install
+
+# 3. Configurar variables de entorno
+cp .env.local.example .env.local
+# Editar .env.local si necesitás cambiar el site de MercadoLibre
+
+# 4. Correr en desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrí [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables de entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Default | Descripción |
+|---|---|---|
+| `NEXT_PUBLIC_ML_SITE` | `MLA` | Site de MercadoLibre (MLA=AR, MLM=MX, MLC=CL) |
+| `ALIEXPRESS_APP_KEY` | — | API key de AliExpress Affiliate (futuro) |
+| `ALIEXPRESS_APP_SECRET` | — | Secret de AliExpress Affiliate (futuro) |
 
-## Learn More
+## Estructura
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  page.tsx                  # Home: hero + categorías + productos
+  buscar/page.tsx           # Resultados de búsqueda con filtros
+  categoria/[slug]/page.tsx # Página de categoría
+components/
+  layout/                   # Header, Footer
+  home/                     # Hero, CategoryGrid, FeaturedProducts
+  products/                 # ProductCard, ProductGrid, Skeleton
+  search/                   # SearchBar, SearchFilters, FilterDrawer
+  ui/                       # Badge, Button
+lib/
+  mercadolibre.ts           # Servicio MercadoLibre API
+  aliexpress.ts             # Mock AliExpress (reemplazar con API real)
+  categories.ts             # Definición de categorías y slugs
+  utils.ts                  # formatPrice y utilidades
+types/
+  product.ts                # Tipos TypeScript compartidos
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy en Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Subir el repo a GitHub
+2. Ir a [vercel.com](https://vercel.com) → **Add New Project** → importar el repo
+3. En **Environment Variables**, agregar `NEXT_PUBLIC_ML_SITE=MLA`
+4. Click **Deploy**
 
-## Deploy on Vercel
+Vercel detecta Next.js automáticamente, sin configuración extra.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Conectar AliExpress real
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Registrarse en [AliExpress Portals](https://portals.aliexpress.com/)
+2. Obtener `APP_KEY` y `APP_SECRET`
+3. Agregar las variables a `.env.local` y en Vercel
+4. Reemplazar la función `searchAliExpress` en `lib/aliexpress.ts` con la llamada real a la API
+5. Eliminar `MOCK_PRODUCTS`
+
+## Agregar más países (i18n de tienda)
+
+Cambiar `NEXT_PUBLIC_ML_SITE` en `.env.local`:
+- `MLA` — Argentina
+- `MLM` — México  
+- `MLC` — Chile
+- `MLB` — Brasil
+- `MLU` — Uruguay
+
+## i18n (futuro)
+
+Todos los strings están marcados con `// TODO: i18n`. Para migrar a next-intl:
+1. `npm install next-intl`
+2. Buscar todos los `// TODO: i18n` en el código
+3. Extraer strings a archivos de mensajes por locale
+
+---
+
+Kakera Find es un proyecto de Kakera Labs.
