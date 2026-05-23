@@ -130,9 +130,22 @@ interface Props {
 }
 
 export function ProductModal({ product, onClose }: Props) {
+  const [shareFile, setShareFile] = useState<File | null>(null)
+  const [cardReady, setCardReady] = useState(false)
   const [sharing, setSharing] = useState(false)
   const [copied, setCopied] = useState(false)
   const overlayRef = useRef<HTMLDivElement>(null)
+
+  // Pre-generate share card on mount so it's ready when the user taps Share.
+  // navigator.share() with files requires the call to happen in the same
+  // microtask as the user gesture — awaiting async work inside the handler
+  // causes browsers to revoke the gesture and drop the file silently.
+  useEffect(() => {
+    generateShareCard(product).then((file) => {
+      setShareFile(file)
+      setCardReady(true)
+    })
+  }, [product])
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -156,7 +169,8 @@ export function ProductModal({ product, onClose }: Props) {
   async function share(target: 'native' | 'whatsapp') {
     setSharing(true)
     try {
-      const file = await generateShareCard(product)
+      // Use pre-generated file — no async work here keeps the user gesture alive
+      const file = shareFile
 
       if (target === 'native') {
         if (file && navigator.canShare?.({ files: [file] })) {
@@ -238,13 +252,13 @@ export function ProductModal({ product, onClose }: Props) {
           {/* Share */}
           <div className="flex flex-col gap-2">
             <p className="text-xs font-semibold text-content-tertiary uppercase tracking-wide">
-              Compartir {sharing && <span className="normal-case font-normal">— generando imagen…</span>}
+              Compartir{!cardReady && <span className="normal-case font-normal font-medium"> — preparando imagen…</span>}
             </p>
             <div className="flex gap-2">
               {/* Compartir (nativo con imagen) */}
               <button
                 onClick={() => share('native')}
-                disabled={sharing}
+                disabled={sharing || !cardReady}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 border border-border-subtle rounded-xl text-sm text-content-secondary hover:text-content-primary hover:border-accent transition-colors disabled:opacity-50"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -256,7 +270,7 @@ export function ProductModal({ product, onClose }: Props) {
               {/* WhatsApp */}
               <button
                 onClick={() => share('whatsapp')}
-                disabled={sharing}
+                disabled={sharing || !cardReady}
                 className="flex-1 flex items-center justify-center gap-2 py-2.5 px-3 border border-border-subtle rounded-xl text-sm text-content-secondary hover:text-green-600 hover:border-green-400 transition-colors disabled:opacity-50"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
