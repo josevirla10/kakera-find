@@ -56,6 +56,7 @@ export function SearchFilters({ onApply }: Props) {
     const next = new URLSearchParams(params.toString())
     next.delete('precioMin')
     next.delete('precioMax')
+    next.delete('orden')
     router.push(`/buscar?${next.toString()}`)
     onApply?.()
   }
