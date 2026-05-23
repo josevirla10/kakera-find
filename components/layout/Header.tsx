@@ -38,7 +38,7 @@ export function Header() {
             Novedades
           </Link>
           <Link
-            href="/#sobre-nosotros"
+            href="/nosotros"
             className="px-3 py-2 text-sm text-content-secondary hover:text-content-primary hover:bg-surface-secondary rounded-lg transition-colors"
           >
             Nosotros

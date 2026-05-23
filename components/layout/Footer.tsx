@@ -44,12 +44,35 @@ export function Footer() {
           {/* About */}
           <div>
             <h3 className="text-xs font-semibold text-content-tertiary uppercase tracking-widest mb-4">
-              Sobre Kakera Find
+              Kakera Labs
             </h3>
-            <p className="text-sm text-content-secondary leading-relaxed">
-              Somos fans del anime que querían un lugar donde encontrar todo sin ruido. Kakera Find
-              es ese lugar — curado, limpio y sin distracciones.
-            </p>
+            <ul className="flex flex-col gap-2">
+              <li>
+                <Link href="/nosotros" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  Nosotros
+                </Link>
+              </li>
+              <li>
+                <Link href="/terminos" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  Términos y condiciones
+                </Link>
+              </li>
+              <li>
+                <a href="mailto:kakeralabs@gmail.com" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  kakeralabs@gmail.com
+                </a>
+              </li>
+              <li>
+                <a href="https://instagram.com/kakeralabs" target="_blank" rel="noopener noreferrer" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a href="https://x.com/KakeraLabs" target="_blank" rel="noopener noreferrer" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  X / Twitter
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 
