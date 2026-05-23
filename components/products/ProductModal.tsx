@@ -11,121 +11,18 @@ const SOURCE_LABEL: Record<Product['source'], string> = {
   aliexpress: 'AliExpress',
 }
 
-const ACCENT = '#8b7cf8'
-const SITE = 'find.kakeralabs.com'
-
-function wrapText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  maxWidth: number,
-  lineHeight: number,
-  maxLines = 3
-): number {
-  const words = text.split(' ')
-  let line = ''
-  let lineY = y
-  let lines = 0
-  for (const word of words) {
-    const test = line + word + ' '
-    if (ctx.measureText(test).width > maxWidth && line) {
-      if (lines >= maxLines - 1) {
-        const truncated = line.trimEnd() + '…'
-        ctx.fillText(truncated, x, lineY)
-        return lineY + lineHeight
-      }
-      ctx.fillText(line.trimEnd(), x, lineY)
-      line = word + ' '
-      lineY += lineHeight
-      lines++
-    } else {
-      line = test
-    }
-  }
-  ctx.fillText(line.trimEnd(), x, lineY)
-  return lineY + lineHeight
-}
-
 async function generateShareCard(product: Product): Promise<File | null> {
   try {
-    const W = 600
-    const IMG_H = 600
-    const INFO_H = 220
-    const H = IMG_H + INFO_H
-
-    const canvas = document.createElement('canvas')
-    canvas.width = W
-    canvas.height = H
-    const ctx = canvas.getContext('2d')!
-
-    // Image section background
-    ctx.fillStyle = '#f4f3ff'
-    ctx.fillRect(0, 0, W, IMG_H)
-
-    // Load product image via proxy (bypasses CORS)
-    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(product.thumbnail)}`
-    const img = new window.Image()
-    img.crossOrigin = 'anonymous'
-    await new Promise<void>((resolve) => {
-      img.onload = () => resolve()
-      img.onerror = () => resolve()
-      img.src = proxyUrl
+    const params = new URLSearchParams({
+      title: product.title,
+      price: formatPrice(product.price, product.currency),
+      source: product.source,
+      thumbnail: product.thumbnail,
     })
-
-    if (img.naturalWidth > 0) {
-      // Cover: fill square, crop center
-      const scale = Math.max(W / img.naturalWidth, IMG_H / img.naturalHeight)
-      const dw = img.naturalWidth * scale
-      const dh = img.naturalHeight * scale
-      const dx = (W - dw) / 2
-      const dy = (IMG_H - dh) / 2
-      ctx.drawImage(img, dx, dy, dw, dh)
-    }
-
-    // Info panel
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, IMG_H, W, INFO_H)
-
-    // Thin top border on info panel
-    ctx.fillStyle = '#ece9ff'
-    ctx.fillRect(0, IMG_H, W, 2)
-
-    // Source badge
-    ctx.fillStyle = product.source === 'aliexpress' ? '#ff6600' : '#ffe600'
-    ctx.beginPath()
-    ctx.roundRect(24, IMG_H + 20, product.source === 'aliexpress' ? 80 : 100, 22, 6)
-    ctx.fill()
-    ctx.fillStyle = product.source === 'aliexpress' ? '#ffffff' : '#333333'
-    ctx.font = 'bold 12px system-ui, sans-serif'
-    ctx.fillText(SOURCE_LABEL[product.source], 32, IMG_H + 35)
-
-    // Title
-    ctx.fillStyle = '#1a1a2e'
-    ctx.font = 'bold 20px system-ui, sans-serif'
-    wrapText(ctx, product.title, 24, IMG_H + 68, W - 48, 26, 2)
-
-    // Price
-    ctx.fillStyle = ACCENT
-    ctx.font = 'bold 28px system-ui, sans-serif'
-    ctx.fillText(formatPrice(product.price, product.currency), 24, IMG_H + 148)
-
-    // Branding strip
-    ctx.fillStyle = '#f4f3ff'
-    ctx.fillRect(0, H - 44, W, 44)
-    ctx.fillStyle = ACCENT
-    ctx.font = 'bold 14px system-ui, sans-serif'
-    ctx.fillText('✨ Encontrado en', 24, H - 17)
-    ctx.fillStyle = '#1a1a2e'
-    ctx.font = 'bold 14px system-ui, sans-serif'
-    ctx.fillText(SITE, 167, H - 17)
-
-    return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => resolve(blob ? new File([blob], 'kakera-find.png', { type: 'image/png' }) : null),
-        'image/png'
-      )
-    })
+    const res = await fetch(`/api/share-card?${params}`)
+    if (!res.ok) return null
+    const blob = await res.blob()
+    return new File([blob], 'kakera-find.png', { type: 'image/png' })
   } catch {
     return null
   }
