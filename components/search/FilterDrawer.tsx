@@ -53,7 +53,7 @@ export function FilterDrawer() {
               </button>
             </div>
             <div className="p-6">
-              <SearchFilters />
+              <SearchFilters onApply={() => setOpen(false)} />
             </div>
           </div>
         </>

@@ -16,7 +16,11 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Precio: mayor a menor' },
 ]
 
-export function SearchFilters() {
+interface Props {
+  onApply?: () => void
+}
+
+export function SearchFilters({ onApply }: Props) {
   const router = useRouter()
   const params = useSearchParams()
 
@@ -33,6 +37,7 @@ export function SearchFilters() {
       next.set(key, value)
     }
     router.push(`/buscar?${next.toString()}`)
+    onApply?.()
   }
 
   function handlePriceSubmit(e: FormEvent<HTMLFormElement>) {
@@ -44,6 +49,7 @@ export function SearchFilters() {
     min ? next.set('precioMin', min) : next.delete('precioMin')
     max ? next.set('precioMax', max) : next.delete('precioMax')
     router.push(`/buscar?${next.toString()}`)
+    onApply?.()
   }
 
   function clearPrices() {
@@ -51,6 +57,7 @@ export function SearchFilters() {
     next.delete('precioMin')
     next.delete('precioMax')
     router.push(`/buscar?${next.toString()}`)
+    onApply?.()
   }
 
   return (

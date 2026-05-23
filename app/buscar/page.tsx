@@ -178,6 +178,33 @@ export default async function BuscarPage({ searchParams }: PageProps) {
         </div>
 
         <div className="flex-1 min-w-0">
+          {/* Sort pills — visible on mobile where sidebar is hidden */}
+          <div className="flex items-center gap-2 mb-4 md:hidden flex-wrap">
+            {[
+              { value: 'relevance', label: 'Relevancia' },
+              { value: 'price_asc', label: 'Precio ↑' },
+              { value: 'price_desc', label: 'Precio ↓' },
+            ].map(({ value, label }) => {
+              const next = new URLSearchParams({ q, fuente, orden: value })
+              if (precioMin) next.set('precioMin', precioMin)
+              if (precioMax) next.set('precioMax', precioMax)
+              const active = orden === value
+              return (
+                <Link
+                  key={value}
+                  href={`/buscar?${next.toString()}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    active
+                      ? 'bg-accent text-white border-accent'
+                      : 'bg-surface border-border-subtle text-content-secondary hover:border-accent hover:text-content-primary'
+                  }`}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+          </div>
+
           <Suspense fallback={RESULTS_SKELETON}>
             <SearchResults
               q={q}
