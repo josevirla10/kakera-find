@@ -43,7 +43,17 @@ function wrapText(
   return lineY + lineHeight
 }
 
-async function generateShareCard(product: Product): Promise<File | null> {
+function loadProxyImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new window.Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve(null)
+    img.src = `/api/image-proxy?url=${encodeURIComponent(src)}`
+  })
+}
+
+function buildShareCard(product: Product, img: HTMLImageElement | null): Promise<File | null> {
   try {
     const W = 600, IMG_H = 600, INFO_H = 220, H = IMG_H + INFO_H
     const canvas = document.createElement('canvas')
@@ -51,39 +61,21 @@ async function generateShareCard(product: Product): Promise<File | null> {
     canvas.height = H
     const ctx = canvas.getContext('2d')!
 
-    // Background
     ctx.fillStyle = '#f4f3ff'
     ctx.fillRect(0, 0, W, IMG_H)
 
-    // Fetch image via proxy as blob → objectURL bypasses canvas CORS restriction
-    try {
-      const proxyRes = await fetch(`/api/image-proxy?url=${encodeURIComponent(product.thumbnail)}`)
-      if (proxyRes.ok) {
-        const blob = await proxyRes.blob()
-        const objectUrl = URL.createObjectURL(blob)
-        const img = new window.Image()
-        await new Promise<void>((resolve) => {
-          img.onload = () => resolve()
-          img.onerror = () => resolve()
-          img.src = objectUrl
-        })
-        if (img.naturalWidth > 0) {
-          const scale = Math.max(W / img.naturalWidth, IMG_H / img.naturalHeight)
-          const dw = img.naturalWidth * scale
-          const dh = img.naturalHeight * scale
-          ctx.drawImage(img, (W - dw) / 2, (IMG_H - dh) / 2, dw, dh)
-        }
-        URL.revokeObjectURL(objectUrl)
-      }
-    } catch { /* draw without image */ }
+    if (img && img.naturalWidth > 0) {
+      const scale = Math.max(W / img.naturalWidth, IMG_H / img.naturalHeight)
+      const dw = img.naturalWidth * scale
+      const dh = img.naturalHeight * scale
+      ctx.drawImage(img, (W - dw) / 2, (IMG_H - dh) / 2, dw, dh)
+    }
 
-    // Info panel
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, IMG_H, W, INFO_H)
     ctx.fillStyle = '#ece9ff'
     ctx.fillRect(0, IMG_H, W, 2)
 
-    // Source badge
     const isAE = product.source === 'aliexpress'
     ctx.fillStyle = isAE ? '#ff6600' : '#ffe600'
     const badgeW = isAE ? 80 : 102
@@ -94,17 +86,14 @@ async function generateShareCard(product: Product): Promise<File | null> {
     ctx.font = 'bold 12px system-ui, sans-serif'
     ctx.fillText(SOURCE_LABEL[product.source], 32, IMG_H + 33)
 
-    // Title
     ctx.fillStyle = '#1a1a2e'
     ctx.font = 'bold 20px system-ui, sans-serif'
     wrapText(ctx, product.title, 24, IMG_H + 68, W - 48, 26)
 
-    // Price
     ctx.fillStyle = '#8b7cf8'
     ctx.font = 'bold 28px system-ui, sans-serif'
     ctx.fillText(formatPrice(product.price, product.currency), 24, IMG_H + 148)
 
-    // Branding strip
     ctx.fillStyle = '#f4f3ff'
     ctx.fillRect(0, H - 44, W, 44)
     ctx.fillStyle = '#8b7cf8'
@@ -120,7 +109,7 @@ async function generateShareCard(product: Product): Promise<File | null> {
       )
     })
   } catch {
-    return null
+    return Promise.resolve(null)
   }
 }
 
@@ -141,7 +130,9 @@ export function ProductModal({ product, onClose }: Props) {
   // microtask as the user gesture — awaiting async work inside the handler
   // causes browsers to revoke the gesture and drop the file silently.
   useEffect(() => {
-    generateShareCard(product).then((file) => {
+    loadProxyImage(product.thumbnail).then((img) =>
+      buildShareCard(product, img)
+    ).then((file) => {
       setShareFile(file)
       setCardReady(true)
     })
