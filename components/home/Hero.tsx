@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { SearchBar } from '@/components/search/SearchBar'
 
 // TODO: i18n
@@ -7,6 +8,13 @@ export function Hero() {
   return (
     <section className="bg-surface-secondary pt-16 pb-24 sm:pt-20 sm:pb-32">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center flex flex-col items-center gap-6">
+        <Image
+          src="/logo.png"
+          alt="Kakera Find"
+          width={120}
+          height={120}
+          className="rounded-full shadow-card"
+        />
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-border-subtle text-xs text-content-tertiary font-medium shadow-card">
           ✨ Curaduría anime — todo nuevo
         </div>
