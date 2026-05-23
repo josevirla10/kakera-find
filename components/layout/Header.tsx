@@ -1,14 +1,18 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { SearchBar } from '@/components/search/SearchBar'
 
-// TODO: i18n
 export function Header() {
+  const [open, setOpen] = useState(false)
+
   return (
     <header className="sticky top-0 z-30 bg-surface border-b border-border-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center gap-6">
         {/* Logo */}
-        <Link href="/" className="shrink-0 group flex items-center gap-2">
+        <Link href="/" className="shrink-0 group flex items-center gap-2" onClick={() => setOpen(false)}>
           <Image
             src="/logo.png"
             alt="Kakera Find"
@@ -53,22 +57,21 @@ export function Header() {
           </Link>
         </nav>
 
-        {/* Hamburger — mobile placeholder */}
-        {/* TODO: implement mobile nav drawer */}
+        {/* Hamburger — mobile */}
         <button
           className="md:hidden ml-auto p-2 text-content-secondary hover:text-content-primary transition-colors"
-          aria-label="Abrir menú"
+          aria-label={open ? 'Cerrar menú' : 'Abrir menú'}
+          onClick={() => setOpen((v) => !v)}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          {open ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
         </button>
       </div>
 
@@ -76,6 +79,33 @@ export function Header() {
       <div className="md:hidden px-4 pb-3 pt-2 bg-surface border-t border-border-subtle">
         <SearchBar size="sm" />
       </div>
+
+      {/* Mobile nav drawer */}
+      {open && (
+        <nav className="md:hidden bg-surface border-t border-border-subtle px-4 py-3 flex flex-col gap-1">
+          <Link
+            href="/#categorias"
+            className="px-3 py-3 text-sm text-content-secondary hover:text-content-primary hover:bg-surface-secondary rounded-lg transition-colors"
+            onClick={() => setOpen(false)}
+          >
+            Categorías
+          </Link>
+          <Link
+            href="/buscar?q=novedades+anime+2024"
+            className="px-3 py-3 text-sm text-content-secondary hover:text-content-primary hover:bg-surface-secondary rounded-lg transition-colors"
+            onClick={() => setOpen(false)}
+          >
+            Novedades
+          </Link>
+          <Link
+            href="/nosotros"
+            className="px-3 py-3 text-sm text-content-secondary hover:text-content-primary hover:bg-surface-secondary rounded-lg transition-colors"
+            onClick={() => setOpen(false)}
+          >
+            Nosotros
+          </Link>
+        </nav>
+      )}
     </header>
   )
 }
