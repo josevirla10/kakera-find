@@ -31,6 +31,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="es" className={`${geist.variable} h-full`}>
+      {/* Capture beforeinstallprompt before React hydrates to avoid timing race */}
+      <script dangerouslySetInnerHTML={{ __html: `window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__pwaPrompt=e;document.dispatchEvent(new CustomEvent('pwa-prompt-ready'));});` }} />
       <body className="min-h-full flex flex-col bg-surface text-content-primary antialiased">
         <Header />
         <main className="flex-1">{children}</main>

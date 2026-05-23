@@ -32,13 +32,32 @@ export function InstallButton() {
       return
     }
 
-    const handler = (e: Event) => {
+    // Check if the event was already captured by the inline script before hydration
+    const win = window as Window & { __pwaPrompt?: BeforeInstallPromptEvent }
+    if (win.__pwaPrompt) {
+      setPrompt(win.__pwaPrompt)
+      setVisible(true)
+      return
+    }
+
+    // Listen for the event fired after component mounts, or via the custom event
+    const handleNative = (e: Event) => {
       e.preventDefault()
       setPrompt(e as BeforeInstallPromptEvent)
       setVisible(true)
     }
-    window.addEventListener('beforeinstallprompt', handler)
-    return () => window.removeEventListener('beforeinstallprompt', handler)
+    const handleCustom = () => {
+      if (win.__pwaPrompt) {
+        setPrompt(win.__pwaPrompt)
+        setVisible(true)
+      }
+    }
+    window.addEventListener('beforeinstallprompt', handleNative)
+    document.addEventListener('pwa-prompt-ready', handleCustom)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleNative)
+      document.removeEventListener('pwa-prompt-ready', handleCustom)
+    }
   }, [])
 
   if (!visible) return null
