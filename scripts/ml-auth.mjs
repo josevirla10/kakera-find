@@ -7,7 +7,7 @@ if (!code) {
 
 const APP_ID = '5266056884641309'
 const APP_SECRET = 'YYzeER8pgR5x4apZxXeTzTvRdMdZXZ6b'
-const REDIRECT_URI = 'https://kakera-find.vercel.app'
+const REDIRECT_URI = 'https://find.kakeralabs.com'
 
 const res = await fetch('https://api.mercadolibre.com/oauth/token', {
   method: 'POST',
