@@ -9,14 +9,6 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.aliexpress.com' },
     ],
   },
-  async headers() {
-    return [
-      {
-        source: '/_next/image',
-        headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
-      },
-    ]
-  },
 }
 
 export default nextConfig

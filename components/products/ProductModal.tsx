@@ -49,9 +49,7 @@ function loadProxyImage(src: string): Promise<HTMLImageElement | null> {
     img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
     img.onerror = () => resolve(null)
-    // Use Next.js image optimizer — served from Vercel's own CDN with our CORS headers,
-    // so canvas.toBlob() can read the pixels without a SecurityError.
-    img.src = `/_next/image?url=${encodeURIComponent(src)}&w=600&q=75`
+    img.src = `/api/image-proxy?url=${encodeURIComponent(src)}`
   })
 }
 
@@ -218,6 +216,7 @@ export function ProductModal({ product, onClose }: Props) {
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, 512px"
+            unoptimized
           />
           <div className="absolute top-3 left-3">
             <Badge variant={product.source}>{SOURCE_LABEL[product.source]}</Badge>

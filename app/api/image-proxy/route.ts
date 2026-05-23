@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server'
 
+export const runtime = 'edge'
+
 function isAllowed(hostname: string): boolean {
   return (
     hostname.endsWith('.alicdn.com') ||
