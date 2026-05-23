@@ -43,13 +43,21 @@ function wrapText(
   return lineY + lineHeight
 }
 
-function loadProxyImage(src: string): Promise<HTMLImageElement | null> {
+function loadImageForCanvas(src: string): Promise<HTMLImageElement | null> {
+  // Try direct load with crossOrigin first — alicdn.com supports CORS.
+  // Falls back to our proxy, then null (card renders without product photo).
   return new Promise((resolve) => {
-    const img = new window.Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => resolve(img)
-    img.onerror = () => resolve(null)
-    img.src = `/api/image-proxy?url=${encodeURIComponent(src)}`
+    const direct = new window.Image()
+    direct.crossOrigin = 'anonymous'
+    direct.onload = () => resolve(direct)
+    direct.onerror = () => {
+      const proxy = new window.Image()
+      proxy.crossOrigin = 'anonymous'
+      proxy.onload = () => resolve(proxy)
+      proxy.onerror = () => resolve(null)
+      proxy.src = `/api/image-proxy?url=${encodeURIComponent(src)}`
+    }
+    direct.src = src
   })
 }
 
@@ -130,7 +138,7 @@ export function ProductModal({ product, onClose }: Props) {
   // microtask as the user gesture — awaiting async work inside the handler
   // causes browsers to revoke the gesture and drop the file silently.
   useEffect(() => {
-    loadProxyImage(product.thumbnail).then((img) =>
+    loadImageForCanvas(product.thumbnail).then((img) =>
       buildShareCard(product, img)
     ).then((file) => {
       setShareFile(file)
