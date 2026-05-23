@@ -26,6 +26,7 @@ interface AEProduct {
   sale_price: string
   product_main_image_url: string
   product_detail_url: string
+  promotion_link?: string
 }
 
 function normalizeAEProduct(item: AEProduct): Product {
@@ -36,7 +37,7 @@ function normalizeAEProduct(item: AEProduct): Product {
     price,
     currency: 'USD',
     thumbnail: item.product_main_image_url,
-    permalink: item.product_detail_url,
+    permalink: item.promotion_link ?? item.product_detail_url,
     source: 'aliexpress',
   }
 }
@@ -64,7 +65,7 @@ export async function searchAliExpress(
     page_size: String(options.limit ?? 20),
     page_no: '1',
     sort: SORT_MAP[options.sort ?? 'relevance'],
-    fields: 'product_id,product_title,sale_price,product_main_image_url,product_detail_url',
+    fields: 'product_id,product_title,sale_price,product_main_image_url,product_detail_url,promotion_link',
     target_currency: 'USD',
     target_language: 'ES',
   }
