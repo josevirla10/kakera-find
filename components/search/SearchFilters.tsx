@@ -113,7 +113,7 @@ export function SearchFilters({ onApply }: Props) {
         <h3 className="text-xs font-semibold text-content-tertiary uppercase tracking-widest mb-3">
           Precio
         </h3>
-        <form onSubmit={handlePriceSubmit} className="flex flex-col gap-2">
+        <form key={`${precioMin}-${precioMax}`} onSubmit={handlePriceSubmit} className="flex flex-col gap-2">
           <input
             type="number"
             name="precioMin"
