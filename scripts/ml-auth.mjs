@@ -5,8 +5,8 @@ if (!code) {
   process.exit(1)
 }
 
-const APP_ID = '5266056884641309'
-const APP_SECRET = 'YYzeER8pgR5x4apZxXeTzTvRdMdZXZ6b'
+const APP_ID = '2330777155471999'
+const APP_SECRET = 'Ytz97DG1hJprkdMg4w6Gl0UL7nSE48Ps'
 const REDIRECT_URI = 'https://find.kakeralabs.com'
 
 const res = await fetch('https://api.mercadolibre.com/oauth/token', {
