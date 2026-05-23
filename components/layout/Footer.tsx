@@ -58,6 +58,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/privacidad" className="text-sm text-content-secondary hover:text-accent transition-colors">
+                  Política de privacidad
+                </Link>
+              </li>
+              <li>
                 <a href="mailto:kakeralabs@gmail.com" className="text-sm text-content-secondary hover:text-accent transition-colors">
                   kakeralabs@gmail.com
                 </a>
