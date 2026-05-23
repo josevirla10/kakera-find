@@ -90,19 +90,9 @@ export async function searchML(
   const sortValue = SORT_MAP[options.sort ?? 'relevance']
   if (sortValue) params.set('sort', sortValue)
 
-  const headers: Record<string, string> = {}
-
-  // Prefer pre-configured user token; fall back to client_credentials
-  if (process.env.ML_ACCESS_TOKEN) {
-    headers['Authorization'] = `Bearer ${process.env.ML_ACCESS_TOKEN}`
-  } else if (process.env.ML_APP_ID && process.env.ML_APP_SECRET) {
-    const token = await getAccessToken()
-    headers['Authorization'] = `Bearer ${token}`
-  }
-
+  // Try public endpoint first (no auth) — avoids PolicyAgent block on uncertified apps
   const res = await fetch(`${ML_BASE}/sites/${ML_SITE}/search?${params}`, {
-    headers,
-    next: { revalidate: 300 }, // 5 min ISR cache
+    next: { revalidate: 300 },
   })
 
   if (!res.ok) {
