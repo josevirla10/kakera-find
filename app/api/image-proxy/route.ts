@@ -25,7 +25,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const res = await fetch(url, { next: { revalidate: 86400 } })
+    const res = await fetch(url, {
+      next: { revalidate: 86400 },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Referer': 'https://www.aliexpress.com/',
+        'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+      },
+    })
     if (!res.ok) return new Response('Upstream error', { status: 502 })
 
     const blob = await res.blob()
