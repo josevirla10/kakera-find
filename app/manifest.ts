@@ -3,7 +3,7 @@ import type { MetadataRoute } from 'next'
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Kakera Find',
-    short_name: 'Kakera',
+    short_name: 'Kakera Find',
     description: 'Descubrí productos anime — figuras, merch kawaii y más.',
     start_url: '/',
     display: 'standalone',
