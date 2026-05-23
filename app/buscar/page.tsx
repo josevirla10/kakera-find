@@ -44,14 +44,19 @@ async function SearchResults({
   const min = precioMin ? Number(precioMin) : null
   const max = precioMax ? Number(precioMax) : null
 
+  // When a price filter is active, fetch price_asc from the API so we get the
+  // cheapest items first — maximizes the chance of finding products in the range.
+  // The user's chosen sort is applied locally after filtering.
+  const apiSort: SortOption = (min !== null || max !== null) ? 'price_asc' : sort
+
   if (fuente === 'aliexpress') {
-    products = await searchAliExpress(q, { sort, limit: PAGE_SIZE, page })
+    products = await searchAliExpress(q, { sort: apiSort, limit: PAGE_SIZE, page })
   } else if (fuente === 'mercadolibre') {
-    products = await searchML(q, { sort, limit: PAGE_SIZE, offset }).catch(() => [])
+    products = await searchML(q, { sort: apiSort, limit: PAGE_SIZE, offset }).catch(() => [])
   } else {
     const [mlResult, aeResult] = await Promise.allSettled([
-      searchML(q, { sort, limit: PAGE_SIZE, offset }),
-      searchAliExpress(q, { sort, limit: PAGE_SIZE, page }),
+      searchML(q, { sort: apiSort, limit: PAGE_SIZE, offset }),
+      searchAliExpress(q, { sort: apiSort, limit: PAGE_SIZE, page }),
     ])
     const ml = mlResult.status === 'fulfilled' ? mlResult.value : []
     const ae = aeResult.status === 'fulfilled' ? aeResult.value : []
