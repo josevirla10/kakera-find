@@ -39,14 +39,24 @@ async function getAccessToken(): Promise<string> {
     return tokenCache.value
   }
 
+  const refreshToken = process.env.ML_REFRESH_TOKEN
+  const grantBody = refreshToken
+    ? new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: process.env.ML_APP_ID!,
+        client_secret: process.env.ML_APP_SECRET!,
+        refresh_token: refreshToken,
+      })
+    : new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: process.env.ML_APP_ID!,
+        client_secret: process.env.ML_APP_SECRET!,
+      })
+
   const res = await fetch(`${ML_BASE}/oauth/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: process.env.ML_APP_ID!,
-      client_secret: process.env.ML_APP_SECRET!,
-    }),
+    body: grantBody,
     cache: 'no-store',
   })
 
@@ -90,8 +100,9 @@ export async function searchML(
   const sortValue = SORT_MAP[options.sort ?? 'relevance']
   if (sortValue) params.set('sort', sortValue)
 
-  // Try public endpoint first (no auth) — avoids PolicyAgent block on uncertified apps
+  const token = await getAccessToken()
   const res = await fetch(`${ML_BASE}/sites/${ML_SITE}/search?${params}`, {
+    headers: { Authorization: `Bearer ${token}` },
     next: { revalidate: 300 },
   })
 

@@ -17,12 +17,21 @@ export const metadata: Metadata = {
   description:
     'Encontrá figuras, periféricos kawaii, merch anime y más. Curaduría de productos para fans del anime, por Kakera Labs.',
   keywords: ['anime', 'figuras', 'merch', 'kawaii', 'otaku', 'periféricos', 'nendoroid', 'kakera'],
+  metadataBase: new URL('https://find.kakeralabs.com'),
   openGraph: {
     title: 'Kakera Find',
     description: 'Descubrí los mejores productos anime en un solo lugar.',
     siteName: 'Kakera Find',
+    url: 'https://find.kakeralabs.com',
     locale: 'es_AR',
     type: 'website',
+    images: [{ url: '/icon.png', width: 512, height: 512, alt: 'Kakera Find' }],
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Kakera Find',
+    description: 'Descubrí los mejores productos anime en un solo lugar.',
+    images: ['/icon.png'],
   },
 }
 
