@@ -63,6 +63,20 @@ export const CATEGORIES: Category[] = [
     icon: '🎪',
     description: 'Todo para tu próximo cosplay',
   },
+  {
+    slug: 'pc-hardware',
+    name: 'PC Hardware',
+    query: 'procesador placa de video ram ssd gabinete pc armado',
+    icon: '🖥️',
+    description: 'Componentes y hardware para armar o mejorar tu PC',
+  },
+  {
+    slug: 'streaming',
+    name: 'Streaming',
+    query: 'microfono webcam capturadora stream elgato ring light',
+    icon: '🎙️',
+    description: 'Equipamiento para streamers y creadores de contenido',
+  },
 ]
 
 export function getCategoryBySlug(slug: string): Category | undefined {

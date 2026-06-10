@@ -1,13 +1,20 @@
-// Uso: node scripts/ml-auth.mjs <codigo_de_la_url>
+// Uso:
+//   Paso 1 — obtener URL de auth:  node scripts/ml-auth.mjs
+//   Paso 2 — canjear código:       node scripts/ml-auth.mjs <codigo_de_la_url>
 const code = process.argv[2]
-if (!code) {
-  console.error('Uso: node scripts/ml-auth.mjs <codigo>')
-  process.exit(1)
-}
 
 const APP_ID = '2330777155471999'
 const APP_SECRET = 'Ytz97DG1hJprkdMg4w6Gl0UL7nSE48Ps'
 const REDIRECT_URI = 'https://find.kakeralabs.com'
+
+if (!code) {
+  const authUrl = `https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=${APP_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`
+  console.log('\n📋 Paso 1 — Abrí esta URL en el browser:\n')
+  console.log(authUrl)
+  console.log('\nDespués de autorizar, ML te redirige a find.kakeralabs.com?code=XXXXX')
+  console.log('Copiá ese código y corré: node scripts/ml-auth.mjs <codigo>\n')
+  process.exit(0)
+}
 
 const res = await fetch('https://api.mercadolibre.com/oauth/token', {
   method: 'POST',
