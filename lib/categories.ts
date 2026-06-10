@@ -35,7 +35,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'ropa-accesorios',
     name: 'Ropa y Accesorios',
-    queryAE: 'anime t-shirt hoodie otaku clothing',
+    queryAE: 'harajuku anime hoodie jacket streetwear unisex',
     queryML: 'remera anime ropa otaku',
     icon: '👕',
     description: 'Remeras, busos y accesorios',
@@ -43,7 +43,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'hogar-deco',
     name: 'Hogar y Deco',
-    queryAE: 'anime poster wall lamp decoration',
+    queryAE: 'anime canvas wall art print poster',
     queryML: 'decoracion anime poster lampara',
     icon: '🏮',
     description: 'Posters, lámparas y decoración',
@@ -75,7 +75,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'pc-hardware',
     name: 'PC Hardware',
-    queryAE: 'processor GPU graphics card RAM SSD gaming PC',
+    queryAE: 'gaming mouse RGB keyboard mechanical gaming headset',
     queryML: 'procesador placa de video ram ssd gabinete pc',
     icon: '🖥️',
     description: 'Componentes y hardware para armar o mejorar tu PC',
@@ -83,7 +83,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'streaming',
     name: 'Streaming',
-    queryAE: 'microphone webcam capture card ring light USB streamer',
+    queryAE: 'ring light tripod selfie phone holder green screen',
     queryML: 'microfono webcam capturadora stream ring light',
     icon: '🎙️',
     description: 'Equipamiento para streamers y creadores de contenido',
