@@ -41,8 +41,8 @@ export default async function CategoriaPage({ params, searchParams }: PageProps)
   let products: Product[] = []
 
   const [mlResult, aeResult] = await Promise.allSettled([
-    searchML(category.query, { limit: PAGE_SIZE, offset, }),
-    searchAliExpress(category.query, { limit: PAGE_SIZE, page }),
+    searchML(category.queryML, { limit: PAGE_SIZE, offset }),
+    searchAliExpress(category.queryAE, { limit: PAGE_SIZE, page }),
   ])
   const ml = mlResult.status === 'fulfilled' ? mlResult.value : []
   const ae = aeResult.status === 'fulfilled' ? aeResult.value : []
