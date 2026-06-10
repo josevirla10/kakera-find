@@ -75,7 +75,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'pc-hardware',
     name: 'PC Hardware',
-    queryAE: 'gaming mouse RGB keyboard mechanical gaming headset',
+    queryAE: 'mechanical keyboard gaming',
     queryML: 'procesador placa de video ram ssd gabinete pc',
     icon: '🖥️',
     description: 'Componentes y hardware para armar o mejorar tu PC',
@@ -83,7 +83,7 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'streaming',
     name: 'Streaming',
-    queryAE: 'ring light tripod selfie phone holder green screen',
+    queryAE: 'ring light LED selfie',
     queryML: 'microfono webcam capturadora stream ring light',
     icon: '🎙️',
     description: 'Equipamiento para streamers y creadores de contenido',
