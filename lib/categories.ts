@@ -66,14 +66,14 @@ export const CATEGORIES: Category[] = [
   {
     slug: 'pc-hardware',
     name: 'PC Hardware',
-    query: 'procesador placa de video ram ssd gabinete pc armado',
+    query: 'processor GPU graphics card RAM SSD motherboard gaming PC',
     icon: '🖥️',
     description: 'Componentes y hardware para armar o mejorar tu PC',
   },
   {
     slug: 'streaming',
     name: 'Streaming',
-    query: 'microfono webcam capturadora stream elgato ring light',
+    query: 'microphone webcam capture card streaming ring light USB condenser',
     icon: '🎙️',
     description: 'Equipamiento para streamers y creadores de contenido',
   },
